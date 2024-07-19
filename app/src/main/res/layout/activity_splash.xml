@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_image_minmin"
+        android:scaleType="centerCrop"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/cloudImageView"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:src="@drawable/cloud_minmin"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="300dp"
+        android:alpha="1"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/faceImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/smily_face_minmin"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textMinMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MinMin"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:layout_below="@id/faceImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:alpha="0"
+        android:visibility="visible" />
+</RelativeLayout>

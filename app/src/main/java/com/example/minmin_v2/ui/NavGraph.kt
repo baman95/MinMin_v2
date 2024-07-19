@@ -5,8 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.minmin_v2.ui.screens.LoginScreen
-import com.example.minmin_v2.ui.screens.SignUpScreen
 import com.example.minmin_v2.ui.screens.SplashScreen
 
 @Composable
