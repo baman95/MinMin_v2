@@ -169,6 +169,14 @@ fun SignUpScreen(navController: NavController) {
                                             Log.d("SignUp", "User profile created successfully")
                                             Toast.makeText(context, "User added successfully", Toast.LENGTH_SHORT).show()
                                             isLoading = false
+                                            auth.currentUser?.sendEmailVerification()
+                                                ?.addOnCompleteListener { verifyTask ->
+                                                    if (verifyTask.isSuccessful) {
+                                                        Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
+                                                    } else {
+                                                        Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
                                             navController.navigate("login")
                                         }
                                         .addOnFailureListener { e ->

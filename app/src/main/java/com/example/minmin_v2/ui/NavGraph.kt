@@ -13,6 +13,7 @@ fun Navigation(navController: NavHostController) {
         composable("splash") { SplashScreen(navController = navController) }
         composable("login") { LoginScreen(navController) }
         composable("signup") { SignUpScreen(navController) }
+        composable("password_reset") { PasswordResetScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("profile") { UserProfileScreen(navController) }
         composable("appUsage") { AppUsageScreen(navController) }
