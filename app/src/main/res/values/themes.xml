@@ -1,9 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.MinMin_v2" parent="android:Theme.Material.Light.NoActionBar" />
-
-    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_screen</item>
+    <!-- Base application theme -->
+    <style name="Theme.MinMin_v2" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Primary theme settings -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="l" tools:ignore="ObsoleteSdkInt">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <!-- Ensure splash screen is not shown again after app launch -->
+        <item name="android:windowBackground">@drawable/background_image_minmin</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
+
+    <!-- Splash screen theme -->
+    <style name="Theme.MinMin_v2.SplashScreen" tools:ignore="NewApi" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/minmin_full_splash</item>-->
+<!--        <item name="android:windowSplashScreenAnimationDuration">1000</item>-->
+<!--        <item name="android:windowSplashScreenIconBackgroundColor">@color/transparent</item>-->
+    </style>
+
 </resources>

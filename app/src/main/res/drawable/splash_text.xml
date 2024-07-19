@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="50dp"
+    android:viewportWidth="200"
+    android:viewportHeight="50">
+    <!-- Define your vector text or image here -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M 10,40 L 190,40 L 190,45 L 10,45 Z" />
+    <!-- Example placeholder for text underline -->
+</vector>
+

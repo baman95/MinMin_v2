@@ -14,13 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MinMin_v2"
         android:enableOnBackInvokedCallback="true"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MinMin_v2">
+            android:theme="@style/Theme.MinMin_v2.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
