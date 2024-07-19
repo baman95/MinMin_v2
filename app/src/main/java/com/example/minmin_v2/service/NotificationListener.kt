@@ -3,31 +3,47 @@ package com.example.minmin_v2.service
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class NotificationListener : NotificationListenerService() {
 
-    private val _notifications = MutableStateFlow<List<StatusBarNotification>>(emptyList())
-    val notifications: StateFlow<List<StatusBarNotification>> = _notifications
-
-    override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        sbn?.let {
-            Log.d("NotificationListener", "Notification Posted: ${it.packageName}")
-            _notifications.value = _notifications.value + it
-        }
-    }
-
-    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
-        sbn?.let {
-            Log.d("NotificationListener", "Notification Removed: ${it.packageName}")
-            _notifications.value = _notifications.value.filter { it != sbn }
-        }
+    companion object {
+        private val _notifications = MutableSharedFlow<List<StatusBarNotification>>(replay = 1)
+        val notifications: SharedFlow<List<StatusBarNotification>> = _notifications
     }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        Log.d("NotificationListener", "Listener Connected")
-        _notifications.value = activeNotifications.toList()
+        Log.d("NotificationListener", "NotificationListener connected")
+        val currentNotifications = activeNotifications.toList()
+        _notifications.tryEmit(currentNotifications)
+        logAllNotifications(currentNotifications)
+    }
+
+    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+        super.onNotificationPosted(sbn)
+        sbn?.let {
+            Log.d("NotificationListener", "Notification posted: ${it.packageName}")
+            val currentNotifications = activeNotifications.toList()
+            _notifications.tryEmit(currentNotifications)
+            logAllNotifications(currentNotifications)
+        }
+    }
+
+    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
+        super.onNotificationRemoved(sbn)
+        sbn?.let {
+            Log.d("NotificationListener", "Notification removed: ${it.packageName}")
+            val currentNotifications = activeNotifications.toList()
+            _notifications.tryEmit(currentNotifications)
+            logAllNotifications(currentNotifications)
+        }
+    }
+
+    private fun logAllNotifications(notifications: List<StatusBarNotification>) {
+        notifications.forEach { notification ->
+            Log.d("NotificationListener", "Notification: ${notification.packageName} - ${notification.notification.extras.getString("android.title")}")
+        }
     }
 }

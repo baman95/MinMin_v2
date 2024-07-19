@@ -26,7 +26,7 @@ fun AppUsageScreen(navController: NavController) {
     val viewModel: AppUsageViewModel = viewModel(factory = AppUsageViewModelFactory(repository))
     val appUsageStats by viewModel.appUsageStats.collectAsState()
 
-    RequestUsageStatsPermission(navController) {
+    RequestUsageStatsPermissionScreen(navController) {
         viewModel.fetchAppUsageStats()
 
         Scaffold(

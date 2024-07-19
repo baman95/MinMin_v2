@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun RequestUsageStatsPermission(navController: NavController, onPermissionGranted: @Composable () -> Unit) {
+fun RequestUsageStatsPermissionScreen(navController: NavController, onPermissionGranted: @Composable () -> Unit) {
     val context = LocalContext.current
     var hasPermission by remember { mutableStateOf(checkUsageStatsPermission(context)) }
 

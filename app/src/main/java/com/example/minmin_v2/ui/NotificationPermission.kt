@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RequestNotificationPermission(navController: NavController, onPermissionGranted: @Composable () -> Unit) {
+fun RequestNotificationPermissionScreen(navController: NavController, onPermissionGranted: @Composable () -> Unit) {
     val context = LocalContext.current
     val enabledListeners = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
     val packageName = context.packageName

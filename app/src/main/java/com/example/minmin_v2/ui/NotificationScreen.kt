@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.minmin_v2.ui.components.BarChart
 import com.example.minmin_v2.viewmodel.NotificationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +22,7 @@ fun NotificationScreen(navController: NavController) {
     val viewModel: NotificationViewModel = viewModel()
     val notifications by viewModel.notifications.collectAsState()
 
-    RequestNotificationPermission(navController) {
+    RequestNotificationPermissionScreen(navController) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -42,13 +41,13 @@ fun NotificationScreen(navController: NavController) {
                     .padding(it)
                     .padding(16.dp)
             ) {
-                val data = notifications.groupBy { it.packageName }
-                    .map { it.key to it.value.size.toFloat() }
-                BarChart(data)
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn {
-                    items(notifications) { notification ->
-                        NotificationItem(notification)
+                if (notifications.isEmpty()) {
+                    Text(text = "No notifications found", style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    LazyColumn {
+                        items(notifications) { notification ->
+                            NotificationItem(notification)
+                        }
                     }
                 }
             }
