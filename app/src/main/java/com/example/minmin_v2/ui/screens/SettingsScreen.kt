@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -105,7 +106,7 @@ fun SettingsScreen(navController: NavController) {
                                 classLevel,
                                 profileImageUri,
                                 context,
-                                user!!.email!!
+                                user!!.email!!.replace(".", "_")
                             )
                             isEditing = false
                         } catch (e: Exception) {
@@ -155,11 +156,13 @@ fun EditProfileForm(
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
