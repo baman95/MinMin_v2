@@ -27,14 +27,14 @@ import java.util.*
 
 @Composable
 fun SignUpScreen(navController: NavController) {
-    var displayName by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    var displayNameError by remember { mutableStateOf(false) }
+    var nameError by remember { mutableStateOf(false) }
     var dateOfBirthError by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
@@ -66,12 +66,12 @@ fun SignUpScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
-                value = displayName,
-                onValueChange = { displayName = it; displayNameError = false },
-                label = { Text("Display Name") },
+                value = name,
+                onValueChange = { name = it; nameError = false },
+                label = { Text("Name") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(if (displayNameError) Color.Red.copy(alpha = 0.1f) else Color.Transparent)
+                    .background(if (nameError) Color.Red.copy(alpha = 0.1f) else Color.Transparent)
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedButton(
@@ -135,20 +135,20 @@ fun SignUpScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    val isDisplayNameValid = displayName.isNotBlank()
+                    val isNameValid = name.isNotBlank()
                     val isDateOfBirthValid = dateOfBirth.isNotBlank()
                     val isEmailValid = email.isNotBlank()
                     val isPasswordValid = password.isNotBlank()
                     val isConfirmPasswordValid = confirmPassword.isNotBlank()
                     val arePasswordsMatching = password == confirmPassword
 
-                    displayNameError = !isDisplayNameValid
+                    nameError = !isNameValid
                     dateOfBirthError = !isDateOfBirthValid
                     emailError = !isEmailValid
                     passwordError = !isPasswordValid
                     confirmPasswordError = !isConfirmPasswordValid
 
-                    if (!isDisplayNameValid || !isDateOfBirthValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+                    if (!isNameValid || !isDateOfBirthValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
                         Toast.makeText(context, "All fields must be filled out.", Toast.LENGTH_SHORT).show()
                     } else if (!arePasswordsMatching) {
                         Toast.makeText(context, "Passwords do not match.", Toast.LENGTH_SHORT).show()
@@ -159,7 +159,7 @@ fun SignUpScreen(navController: NavController) {
                                 if (task.isSuccessful) {
                                     val emailFormatted = email.replace(".", "_")
                                     val userProfile = hashMapOf(
-                                        "displayName" to displayName,
+                                        "name" to name,
                                         "dateOfBirth" to dateOfBirth,
                                         "email" to email
                                     )

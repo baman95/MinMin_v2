@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun ProfileImagePicker() {
+fun ProfileImagePicker(initialUri: String?, onImageSelected: (Uri) -> Unit) {
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -29,6 +29,7 @@ fun ProfileImagePicker() {
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri = uri
+        uri?.let { onImageSelected(it) }
     }
 
     Column(
@@ -37,6 +38,12 @@ fun ProfileImagePicker() {
         imageUri?.let {
             Image(
                 painter = rememberAsyncImagePainter(it),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp).clip(CircleShape)
+            )
+        } ?: initialUri?.let {
+            Image(
+                painter = rememberAsyncImagePainter(Uri.parse(it)),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp).clip(CircleShape)
             )

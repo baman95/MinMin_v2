@@ -11,10 +11,10 @@ import com.example.minmin_v2.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun LeaderboardScreen(navController: NavController) {
     Scaffold(
-//        topBar = { TopBar(title = "Home", navController = navController) }
-    ) {
+//        topBar = { TopBar(title = "Leaderboard", navController = navController) }
+    )  {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -23,17 +23,7 @@ fun HomeScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = { navController.navigate("profile") }) {
-                Text("Go to Profile")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("appUsage") }) {
-                Text("App Usage")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("notificationManagement") }) {
-                Text("Notification Management")
-            }
+            Text("Leaderboard will be implemented here")
         }
     }
 }
