@@ -1,6 +1,7 @@
 package com.example.minmin_v2.ui.screens
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -19,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,7 +37,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.*
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(navController: NavController, onProfileUpdated: () -> Unit) {
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
     val context = LocalContext.current
@@ -106,9 +106,10 @@ fun SettingsScreen(navController: NavController) {
                                 classLevel,
                                 profileImageUri,
                                 context,
-                                user!!.email!!.replace(".", "_")
+                                user!!.email!!
                             )
                             isEditing = false
+                            onProfileUpdated()
                         } catch (e: Exception) {
                             errorMessage = "Failed to update profile: ${e.message}"
                         }
@@ -156,13 +157,11 @@ fun EditProfileForm(
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(rememberScrollState()), // Make the form scrollable
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -294,6 +293,21 @@ fun LocationPickerField(location: String, onLocationSelected: (String) -> Unit) 
     val context = LocalContext.current
     var locationState by remember { mutableStateOf(location) }
 
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED) {
+        // Request location permissions
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            1
+        )
+    }
+
     OutlinedTextField(
         value = locationState,
         onValueChange = {},
@@ -309,6 +323,11 @@ fun LocationPickerField(location: String, onLocationSelected: (String) -> Unit) 
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED) {
                     // Request location permissions
+                    ActivityCompat.requestPermissions(
+                        context as Activity,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                        1
+                    )
                     return@IconButton
                 }
                 val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)

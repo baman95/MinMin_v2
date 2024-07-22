@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.minmin_v2.R
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SplashScreen(navController: NavController) {
@@ -32,6 +33,8 @@ fun SplashScreen(navController: NavController) {
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val smallerDimension = if (screenWidth < screenHeight) screenWidth else screenHeight
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
 
     val cloudOffsetX by animateDpAsState(
         targetValue = if (startAnimation) 0.dp else (-200).dp,
@@ -53,7 +56,7 @@ fun SplashScreen(navController: NavController) {
         }, 1000) // 1 second delay
 
         Handler(Looper.getMainLooper()).postDelayed({
-            navController.navigate("login") {
+            navController.navigate(if (user != null) "home" else "login") {
                 popUpTo("splash") { inclusive = true }
             }
         }, 3000) // 3-second delay

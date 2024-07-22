@@ -25,13 +25,13 @@ import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(title: String, navController: NavController) {
+fun TopBar(title: String, navController: NavController,  refreshTrigger: Boolean) {
     val auth = FirebaseAuth.getInstance()
     val user = auth.currentUser
     var profileImageUri by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(user) {
+    LaunchedEffect(user, refreshTrigger) {
         if (user != null) {
             val db = FirebaseFirestore.getInstance()
             val docRef = db.collection("users").document(user.email!!.replace(".", "_"))

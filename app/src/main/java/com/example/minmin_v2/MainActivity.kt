@@ -1,54 +1,52 @@
 package com.example.minmin_v2
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.minmin_v2.ui.Navigation
 import com.example.minmin_v2.ui.theme.MinMin_v2Theme
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        // Commented out to avoid default splash screen
+        // installSplashScreen()
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate called")
+
+        sharedPreferences = getSharedPreferences("minmin_prefs", Context.MODE_PRIVATE)
+        val auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
+
+        // Save the authentication state
+        if (user != null) {
+            sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
+        } else {
+            sharedPreferences.edit().putBoolean("is_logged_in", false).apply()
+        }
 
         setContent {
             MinMin_v2Theme {
                 val navController = rememberNavController()
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    Navigation(navController = navController)
+                    Navigation(navController = navController, sharedPreferences = sharedPreferences)
                 }
             }
         }
     }
 }
 
+
+//
 //@Composable
 //fun SplashScreen(navController: NavHostController) {
 //    var startAnimation by remember { mutableStateOf(false) }
