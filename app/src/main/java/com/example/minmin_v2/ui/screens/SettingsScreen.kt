@@ -2,9 +2,11 @@ package com.example.minmin_v2.ui.screens
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -338,7 +340,13 @@ fun LocationPickerField(location: String, onLocationSelected: (String) -> Unit) 
                         if (addresses?.isNotEmpty() == true) {
                             locationState = addresses?.get(0)?.getAddressLine(0) ?: "Location not found"
                             onLocationSelected(locationState)
+                        } else {
+                            Toast.makeText(context, "Location not found. Please enable location services.", Toast.LENGTH_SHORT).show()
+                            context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                         }
+                    } ?: run {
+                        Toast.makeText(context, "Failed to fetch location. Please enable location services.", Toast.LENGTH_SHORT).show()
+                        context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                     }
                 }
             }) {
