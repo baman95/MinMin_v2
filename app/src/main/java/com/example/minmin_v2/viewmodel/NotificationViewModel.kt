@@ -24,7 +24,13 @@ class NotificationViewModel : ViewModel() {
 
     private fun logAllNotifications(notifications: List<StatusBarNotification>) {
         notifications.forEach { notification ->
-            Log.d("NotificationViewModel", "Notification: ${notification.packageName} - ${notification.notification.extras.getString("android.title")}")
+            val title = notification.notification.extras.get("android.title")
+            val titleText = when (title) {
+                is String -> title
+                is android.text.SpannableString -> title.toString()
+                else -> "Unknown Title"
+            }
+            Log.d("NotificationViewModel", "Notification: ${notification.packageName} - $titleText")
         }
     }
 }

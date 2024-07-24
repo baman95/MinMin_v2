@@ -51,6 +51,8 @@ fun Navigation(navController: NavHostController = rememberNavController(), share
             composable("appUsage") { AppUsageScreen(navController) }
             composable("notificationManagement") { NotificationScreen(navController) }
             composable("leaderboard") { LeaderboardScreen(navController) }
+            composable("blockApp") { BlockAppScreen(navController) }
+            composable("delayedRefresh") { DelayedRefreshScreen(navController) }
             composable("settings") {
                 SettingsScreen(navController = navController, onProfileUpdated = {
                     refreshTrigger = !refreshTrigger

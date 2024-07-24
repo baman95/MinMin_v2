@@ -34,6 +34,14 @@ fun HomeScreen(navController: NavController) {
             Button(onClick = { navController.navigate("notificationManagement") }) {
                 Text("Notification Management")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("blockApp") }) {
+                Text("Block Apps")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("delayedRefresh") }) {
+                Text("Delayed Refresh")
+            }
         }
     }
 }

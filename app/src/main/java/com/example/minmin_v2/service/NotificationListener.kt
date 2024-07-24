@@ -43,7 +43,13 @@ class NotificationListener : NotificationListenerService() {
 
     private fun logAllNotifications(notifications: List<StatusBarNotification>) {
         notifications.forEach { notification ->
-            Log.d("NotificationListener", "Notification: ${notification.packageName} - ${notification.notification.extras.getString("android.title")}")
+            val title = notification.notification.extras.get("android.title")
+            val titleText = when (title) {
+                is String -> title
+                is android.text.SpannableString -> title.toString()
+                else -> "Unknown Title"
+            }
+            Log.d("NotificationListener", "Notification: ${notification.packageName} - $titleText")
         }
     }
 }
