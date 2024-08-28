@@ -4,62 +4,91 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.app.usage.UsageStats
-import android.app.usage.UsageStatsManager
+import android.content.Context
 import android.content.Intent
-import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.example.minmin_v2.MainActivity
 import com.example.minmin_v2.R
-import java.util.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class BlockAppService : Service() {
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val checkInterval = 1000L // 1 second
-    private var blockedAppPackage: String? = null
-    private var blockEndTime: Long = 0L
+    private val blockedApps = mutableSetOf<String>()
+    private val CHANNEL_ID = "BlockAppServiceChannel"
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: View
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate() {
         super.onCreate()
+        createNotificationChannel()
         startForegroundService()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        createOverlayView()
-        startBlockingLogic()
-        Log.d("BlockAppService", "Service started")
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val packageName = intent?.getStringExtra("packageName")
+        val blockDuration = intent?.getLongExtra("blockDuration", 0L)
+        val appName = intent?.getStringExtra("appName")
+        if (packageName != null && blockDuration != null) {
+            if (blockDuration > 0) {
+                blockedApps.add(packageName)
+                showOverlay(appName ?: "this app", blockDuration)
+                saveBlockedAppDataToFirebase(appName, blockDuration)
+            } else {
+                blockedApps.remove(packageName)
+                removeOverlay()
+                removeBlockedAppDataFromFirebase(appName)
+            }
+        } else {
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(this, "Error: Missing package name or duration", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return START_NOT_STICKY
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                "Block App Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(serviceChannel)
+        }
     }
 
     private fun startForegroundService() {
-        val channelId = "BlockAppServiceChannel"
-        val channelName = "Block App Service Channel"
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_LOW
-        )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
-
-        val notification: Notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Blocking App Usage")
-            .setContentText("Service is running...")
-            .setSmallIcon(R.drawable.ic_block)
+        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("App Blocking Service")
+            .setContentText("Blocking selected apps")
+            .setSmallIcon(R.drawable.ic_block) // Add an appropriate icon
             .build()
 
         startForeground(1, notification)
     }
 
-    private fun createOverlayView() {
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    private fun showOverlay(appName: String, blockDuration: Long) {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         overlayView = inflater.inflate(R.layout.overlay_block, null)
 
         val params = WindowManager.LayoutParams(
@@ -67,72 +96,70 @@ class BlockAppService : Service() {
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-        windowManager.addView(overlayView, params)
-        overlayView.visibility = View.GONE
-    }
-
-    private fun startBlockingLogic() {
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                if (System.currentTimeMillis() < blockEndTime) {
-                    if (blockedAppPackage != null && isAppRunning(blockedAppPackage!!)) {
-                        showOverlay()
-                    } else {
-                        hideOverlay()
-                    }
-                } else {
-                    hideOverlay()
-                    stopSelf()
-                }
-                handler.postDelayed(this, checkInterval)
-            }
-        }, checkInterval)
-    }
-
-    private fun isAppRunning(packageName: String): Boolean {
-        val usageStatsManager = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -5)
-        val endTime = System.currentTimeMillis()
-        val startTime = calendar.timeInMillis
-
-        val usageStatsList: List<UsageStats> = usageStatsManager.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY, startTime, endTime
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
         )
 
-        for (usageStats in usageStatsList) {
-            if (usageStats.packageName == packageName && usageStats.totalTimeInForeground > 0) {
-                return true
+        // Setup overlay views
+        val overlayTitle = overlayView.findViewById<TextView>(R.id.overlay_title)
+        val overlayMessage = overlayView.findViewById<TextView>(R.id.overlay_message)
+        val overlayTimer = overlayView.findViewById<TextView>(R.id.overlay_timer_value)
+        val removeButton: Button = overlayView.findViewById(R.id.remove_block_button)
+
+        overlayTitle.text = "Time's Up!"
+        overlayMessage.text = "You've reached your usage limit for $appName. Take a break and enjoy some offline activities. We'll be here when you get back!"
+        overlayTimer.text = formatDuration(blockDuration)
+
+        removeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+            startActivity(intent)
+            removeOverlay()
         }
-        return false
+
+        windowManager.addView(overlayView, params)
     }
 
-    private fun showOverlay() {
-        overlayView.visibility = View.VISIBLE
+    private fun removeOverlay() {
+        if (::overlayView.isInitialized && overlayView.isAttachedToWindow) {
+            windowManager.removeView(overlayView)
+        }
     }
 
-    private fun hideOverlay() {
-        overlayView.visibility = View.GONE
+    private fun saveBlockedAppDataToFirebase(appName: String?, blockDuration: Long) {
+        val user = auth.currentUser
+        user?.let {
+            val userEmail = it.email
+            val userDocRef = firestore.collection("UserAppActivity").document(userEmail!!)
+            userDocRef.update(mapOf("blockedApps.$appName" to blockDuration))
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Data saved successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        blockedAppPackage = intent?.getStringExtra("packageName")
-        val blockDuration = intent?.getLongExtra("blockDuration", 0L) ?: 0L
-        blockEndTime = System.currentTimeMillis() + blockDuration * 60 * 1000 // Convert minutes to milliseconds
-        return START_STICKY
+    private fun removeBlockedAppDataFromFirebase(appName: String?) {
+        val user = auth.currentUser
+        user?.let {
+            val userEmail = it.email
+            val userDocRef = firestore.collection("UserAppActivity").document(userEmail!!)
+            userDocRef.update(mapOf("blockedApps.$appName" to null))
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Data removed successfully", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to remove data", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
-        windowManager.removeView(overlayView)
-        Log.d("BlockAppService", "Service destroyed")
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    private fun formatDuration(durationInMillis: Long): String {
+        val minutes = (durationInMillis / 1000) / 60
+        val hours = minutes / 60
+        val remainingMinutes = minutes % 60
+        return String.format("%02d:%02d", hours, remainingMinutes)
     }
 }

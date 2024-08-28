@@ -1,16 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#80000000">
+    android:background="@android:color/transparent">
 
     <TextView
+        android:id="@+id/overlay_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="App Blocked"
-        android:textSize="30sp"
-        android:textColor="@android:color/white" />
+        android:text="@string/overlay_title"
+        android:textSize="24sp"
+        android:textColor="#FFFFFF"
+        android:padding="16dp" />
 
+    <TextView
+        android:id="@+id/overlay_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/overlay_message"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:padding="16dp"
+        tools:ignore="InvalidId" />
+
+    <TextView
+        android:id="@+id/overlay_timer_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:padding="16dp"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/remove_block_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/remove_block"
+        android:backgroundTint="#FF0000"
+        android:textColor="#FFFFFF" />
 </LinearLayout>

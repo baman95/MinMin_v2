@@ -78,6 +78,10 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
+    implementation("androidx.compose.material3:material3-window-size-class:1.0.0-alpha01")
+    implementation("androidx.cardview:cardview:1.0.0")
+
+
 //    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation(libs.androidx.navigation.runtime.ktx)
@@ -89,6 +93,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.play.services.games)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.lifecycle.service)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

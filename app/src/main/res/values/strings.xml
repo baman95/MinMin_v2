@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MinMin_v2</string>
+    <string name="overlay_title">Time\'s Up!</string>
+    <string name="overlay_message">You\'ve reached your usage limit for this app. Take a break and enjoy some offline activities. We\'ll be here when you get back\!</string>
+    <string name="overlay_timer">Access will be restored in:</string>
+    <string name="remove_block">Close App</string>
 </resources>
