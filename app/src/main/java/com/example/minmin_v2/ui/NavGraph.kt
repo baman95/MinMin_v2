@@ -17,7 +17,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.minmin_v2.ui.components.BottomNavigationBar
 import com.example.minmin_v2.ui.components.TopBar
-import com.example.minmin_v2.ui.screens.*
+import com.example.minmin_v2.ui.screens.BlockAppScreen
+import com.example.minmin_v2.ui.screens.DelayedRefreshScreen
+import com.example.minmin_v2.ui.screens.HomeScreen
+import com.example.minmin_v2.ui.screens.LeaderboardScreen
+import com.example.minmin_v2.ui.screens.SettingsScreen
+import com.example.minmin_v2.ui.screens.SplashScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +38,7 @@ fun Navigation(navController: NavHostController = rememberNavController(), share
             }
         },
         bottomBar = {
-            if (currentRoute in listOf("home", "leaderboard", "settings")) {
+            if (currentRoute in listOf("home", "leaderboard", "community")) {
                 BottomNavigationBar(navController)
             }
         }
@@ -51,6 +56,7 @@ fun Navigation(navController: NavHostController = rememberNavController(), share
             composable("appUsage") { AppUsageScreen(navController) }
             composable("notificationManagement") { NotificationScreen(navController) }
             composable("leaderboard") { LeaderboardScreen(navController) }
+            composable("community") { CommunityScreen(navController) }
             composable("blockApp") { BlockAppScreen(navController) }
             composable("delayedRefresh") { DelayedRefreshScreen(navController) }
             composable("settings") {
