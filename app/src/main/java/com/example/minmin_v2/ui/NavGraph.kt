@@ -64,6 +64,13 @@ fun Navigation(navController: NavHostController = rememberNavController(), share
                     refreshTrigger = !refreshTrigger
                 })
             }
+            composable("postCreation") {
+                PostCreationScreen(navController)
+            }
+            composable("postDetail/{postId}") { backStackEntry ->
+                val postId = backStackEntry.arguments?.getString("postId") ?: return@composable
+                PostDetailScreen(navController, postId)
+            }
         }
     }
 }
