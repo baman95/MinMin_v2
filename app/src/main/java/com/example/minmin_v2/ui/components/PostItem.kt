@@ -7,15 +7,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -23,7 +25,6 @@ import com.example.minmin_v2.R
 import com.example.minmin_v2.utils.Post
 import com.example.minmin_v2.utils.getTimeAgo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostItem(
     post: Post,
@@ -37,22 +38,20 @@ fun PostItem(
             .clickable {
                 navController.navigate("postDetail/${post.id}")
             },
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             // Header
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // Profile Image
-                post.profileImage?.let { profileImageUrl ->
-                    Image(
-                        painter = rememberAsyncImagePainter(profileImageUrl),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                    )
-                } ?: Image(
-                    painter = rememberAsyncImagePainter(R.drawable.ic_profile),
+                val profileImagePainter = if (post.profileImage != null) {
+                    rememberAsyncImagePainter(post.profileImage)
+                } else {
+                    rememberAsyncImagePainter(R.drawable.ic_profile)
+                }
+                Image(
+                    painter = profileImagePainter,
                     contentDescription = null,
                     modifier = Modifier
                         .size(40.dp)
@@ -62,8 +61,7 @@ fun PostItem(
                 Column {
                     Text(
                         text = post.userName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
                         text = getTimeAgo(post.timestamp),
@@ -78,8 +76,7 @@ fun PostItem(
             // Post Content
             Text(
                 text = post.textContent,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.bodyLarge
             )
 
             // Post Image
@@ -105,13 +102,24 @@ fun PostItem(
             ) {
                 IconButton(onClick = onLikeClick) {
                     Icon(
-                        imageVector = if (post.likes > 0) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        imageVector = if (post.isLikedByCurrentUser) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = null,
-                        tint = if (post.likes > 0) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (post.isLikedByCurrentUser) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Text(
-                    text = "${post.likes}",
+                    text = "${post.likes} Likes",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.Comment,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${post.commentsCount} Comments",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

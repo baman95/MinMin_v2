@@ -73,6 +73,11 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
+    // Google Play Services
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity:17.1.1")
+
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.1")
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation("com.google.android.material:material:1.4.0")
@@ -80,6 +85,13 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.4.0-alpha10")
     implementation("androidx.compose.material3:material3-window-size-class:1.0.0-alpha01")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+    // Ensure all your Compose dependencies are using the same version
+    implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material:material:1.5.0")
+
+
 
 
 //    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")

@@ -9,7 +9,7 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.minmin_v2" />
-                  <option name="mobileSdkAppId" value="1:89608020180:android:92979f2c62b6e294f45b41" />
+                  <option name="mobileSdkAppId" value="1:89608020180:android:4d2c8a49da6ae59ef45b41" />
                   <option name="projectId" value="minminv1" />
                   <option name="projectNumber" value="89608020180" />
                 </ConnectionSetting>

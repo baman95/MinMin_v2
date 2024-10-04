@@ -21,6 +21,8 @@ import com.example.minmin_v2.ui.Navigation
 import com.example.minmin_v2.ui.theme.MinMin_v2Theme
 import com.google.firebase.auth.FirebaseAuth
 
+
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences

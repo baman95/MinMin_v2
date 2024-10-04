@@ -237,7 +237,7 @@ suspend fun createUserProfile(
     onError: (String) -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
-    val userRef = db.collection("Users").document(userId)
+    val userRef = db.collection("users").document(userId)
     val userProfile = hashMapOf(
         "name" to name,
         "dateOfBirth" to dateOfBirth,

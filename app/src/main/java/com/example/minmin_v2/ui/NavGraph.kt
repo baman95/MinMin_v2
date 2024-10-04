@@ -1,3 +1,4 @@
+// File: Navigation.kt
 package com.example.minmin_v2.ui
 
 import android.content.SharedPreferences
@@ -17,24 +18,24 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.minmin_v2.ui.components.BottomNavigationBar
 import com.example.minmin_v2.ui.components.TopBar
-import com.example.minmin_v2.ui.screens.BlockAppScreen
-import com.example.minmin_v2.ui.screens.DelayedRefreshScreen
-import com.example.minmin_v2.ui.screens.HomeScreen
-import com.example.minmin_v2.ui.screens.LeaderboardScreen
-import com.example.minmin_v2.ui.screens.SettingsScreen
-import com.example.minmin_v2.ui.screens.SplashScreen
+import com.example.minmin_v2.ui.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Navigation(navController: NavHostController = rememberNavController(), sharedPreferences: SharedPreferences) {
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
+fun Navigation(
+    navController: NavHostController = rememberNavController(),
+    sharedPreferences: SharedPreferences
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
     var refreshTrigger by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            if (currentRoute in listOf("home", "leaderboard", "settings")) {
-                TopBar(title = currentRoute!!.capitalize(), navController = navController, refreshTrigger = refreshTrigger)
+            when (currentRoute) {
+                "home", "leaderboard" -> TopBar(navController = navController, title = currentRoute.capitalize())
+                "settings" -> TopBar(navController = navController, title = "Settings")
+                // For screens with a back button, the TopBar is handled within the screen
             }
         },
         bottomBar = {
@@ -70,6 +71,11 @@ fun Navigation(navController: NavHostController = rememberNavController(), share
             composable("postDetail/{postId}") { backStackEntry ->
                 val postId = backStackEntry.arguments?.getString("postId") ?: return@composable
                 PostDetailScreen(navController, postId)
+            }
+            // Add this route
+            composable("reportPost/{postId}") { backStackEntry ->
+                val postId = backStackEntry.arguments?.getString("postId") ?: return@composable
+                ReportPostScreen(navController, postId)
             }
         }
     }
