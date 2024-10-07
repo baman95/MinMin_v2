@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.minmin_v2"
+    namespace = "com.minzy.minmin_v2"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.minmin_v2"
+        applicationId = "com.minzy.minmin_v2"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
